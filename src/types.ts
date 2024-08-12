@@ -1,5 +1,17 @@
 export const supportPlat = ['cf', 'nc']
 
+export interface Lab {
+    uid: number
+    name: string
+    summary: string
+    college: string
+    position: string
+    limit: string
+    group: string
+    time: string
+    release: boolean
+}
+
 export interface Event {
     name: string
     platform: string

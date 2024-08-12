@@ -4,6 +4,7 @@ import { Config } from '..'
 
 export class Events {
     constructor(private ctx: Context, private config: Config) { }
+
     private getStatus(st: string): string {
         if (st === 'Public') {
             return '已发布'
