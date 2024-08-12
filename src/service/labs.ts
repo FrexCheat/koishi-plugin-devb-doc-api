@@ -8,22 +8,27 @@ export class Labs {
     async getLabs(release: boolean) {
         let apiURL = release ? '/api/lab/get?release=true' : '/api/lab/get?release=false'
         let temp = await this.ctx.http.get(this.config.baseURL + apiURL)
-        if ('status' in temp) {
-            if (temp['status'] === 'error') {
-                return `获取失败! ${temp['message']}`
+        if (temp !== null) {
+            if ('status' in temp) {
+                if (temp['status'] === 'error') {
+                    return `获取失败! ${temp['message']}`
+                }
             }
-        }
-        let data: Lab[] = temp
-        let res: string = `共找到 ${data.length} 个校内实验室：\n`
-        data.forEach((obj) => {
+            let data: Lab[] = temp
+            let res: string = `共找到 ${data.length} 个校内实验室：\n`
+            data.forEach((obj) => {
+                res = res.concat('------------------\n')
+                res = res.concat(`实验室UID：${obj.uid}\n`)
+                res = res.concat(`实验室名称：${obj.name}\n`)
+                res = res.concat(`实验室简介：${obj.summary}\n`)
+            })
             res = res.concat('------------------\n')
-            res = res.concat(`实验室UID：${obj.uid}\n`)
-            res = res.concat(`实验室名称：${obj.name}\n`)
-            res = res.concat(`实验室简介：${obj.summary}\n`)
-        })
-        res = res.concat('------------------\n')
-        res = res.concat('信息详情: https://newbie.frexlink.cn/main.html')
-        return res
+            res = res.concat('信息详情: https://newbie.frexlink.cn/main.html')
+            return res
+        }
+        else {
+            return '暂无实验室信息。'
+        }
     }
 
     async uploadLab(data: Lab) {
@@ -38,13 +43,13 @@ export class Labs {
         }
         let msg: string = `有新校内实验室信息待审核：\n`
         msg = msg.concat('------------------\n')
-        msg = msg.concat(`实验室名称${data.name}\n`)
-        msg = msg.concat(`实验室简介${data.summary}\n`)
-        msg = msg.concat(`实验室学院${data.college}\n`)
-        msg = msg.concat(`实验室位置${data.position}\n`)
-        msg = msg.concat(`招新范围${data.limit}\n`)
-        msg = msg.concat(`招新交流群${data.group}\n`)
-        msg = msg.concat(`招新时间${data.time}\n`)
+        msg = msg.concat(`实验室名称：${data.name}\n`)
+        msg = msg.concat(`实验室简介：${data.summary}\n`)
+        msg = msg.concat(`实验室学院：${data.college}\n`)
+        msg = msg.concat(`实验室位置：${data.position}\n`)
+        msg = msg.concat(`招新范围：${data.limit}\n`)
+        msg = msg.concat(`招新交流群：${data.group}\n`)
+        msg = msg.concat(`招新时间：${data.time}\n`)
         msg = msg.concat('------------------\n')
         msg = msg.concat('使用 devb-unlab 命令查看未审核的校内比赛列表。')
         this.config.groups.forEach(obj => {
@@ -90,5 +95,6 @@ export class Labs {
                 return `删除失败! ${resp['message']}`
             }
         }
+        return '删除成功!'
     }
 }

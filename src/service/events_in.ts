@@ -8,23 +8,28 @@ export class InnerEvents {
     async getEvents(release: boolean) {
         let apiURL = release ? '/api/event/inner/get?release=true' : '/api/event/inner/get?release=false'
         let temp = await this.ctx.http.get(this.config.baseURL + apiURL)
-        if ('status' in temp) {
-            if (temp['status'] === 'error') {
-                return `获取失败! ${temp['message']}`
+        if (temp !== null) {
+            if ('status' in temp) {
+                if (temp['status'] === 'error') {
+                    return `获取失败! ${temp['message']}`
+                }
             }
-        }
-        let data: InnerEvent[] = temp
-        let res: string = `共找到 ${data.length} 场校内比赛：\n`
-        data.forEach((obj) => {
+            let data: InnerEvent[] = temp
+            let res: string = `共找到 ${data.length} 场校内比赛：\n`
+            data.forEach((obj) => {
+                res = res.concat('------------------\n')
+                res = res.concat(`比赛UID：${obj.uid}\n`)
+                res = res.concat(`比赛名称：${obj.name}\n`)
+                res = res.concat(`比赛简介：${obj.summary}\n`)
+                res = res.concat(`比赛时间：${obj.startAt}\n`)
+            })
             res = res.concat('------------------\n')
-            res = res.concat(`比赛UID：${obj.uid}\n`)
-            res = res.concat(`比赛名称：${obj.name}\n`)
-            res = res.concat(`比赛简介：${obj.summary}\n`)
-            res = res.concat(`比赛时间：${obj.startAt}\n`)
-        })
-        res = res.concat('------------------\n')
-        res = res.concat('比赛详情: https://newbie.frexlink.cn/main.html')
-        return res
+            res = res.concat('比赛详情: https://newbie.frexlink.cn/main.html')
+            return res
+        }
+        else {
+            return '暂无校内比赛信息。'
+        }
     }
 
     async uploadEvent(data: InnerEvent) {
@@ -88,5 +93,6 @@ export class InnerEvents {
                 return `删除失败! ${resp['message']}`
             }
         }
+        return '删除成功!'
     }
 }
