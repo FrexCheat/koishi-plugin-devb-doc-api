@@ -1,11 +1,25 @@
 import { Context, Schema } from 'koishi'
+import { Events } from './service/events'
 
 export const name = 'devb-doc-api'
 
-export interface Config {}
+export const inject = ['http']
 
-export const Config: Schema<Config> = Schema.object({})
+export interface Config {
+  baseURL: string,
+  checker: string,
+}
 
-export function apply(ctx: Context) {
-  // write your plugin here
+export const Config: Schema<Config> = Schema.object({
+  baseURL: Schema.string().required().description('API请求地址'),
+  checker: Schema.string().description('审核者账号')
+})
+
+export function apply(ctx: Context, config: Config) {
+  let events = new Events(ctx, config)
+
+  ctx.command('devb-e [plat:text]').action(async (_, plat) => {
+    let res = await events.getEvents(plat)
+    return res
+  })
 }
