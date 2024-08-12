@@ -28,3 +28,6 @@ export interface InnerEvent {
     startAt: string
     release: boolean
 }
+
+export const innerCol = ['name', 'summary', 'notes', 'startAt', 'release']
+export const labCol = ['name', 'summary', 'college', 'position', 'limit', 'group', 'time', 'release']
