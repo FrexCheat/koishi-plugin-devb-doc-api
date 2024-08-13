@@ -3,10 +3,11 @@ import { Events } from './service/events'
 import { InnerEvents } from './service/events_in'
 import { Labs } from './service/labs'
 import { InnerEvent, Lab } from './types'
+import { generateInfoImage } from './template'
 
 export const name = 'devb-doc-api'
 
-export const inject = ['http', 'database']
+export const inject = ['http', 'database', 'puppeteer']
 
 interface Group {
   platform: string,
@@ -33,19 +34,22 @@ export function apply(ctx: Context, config: Config) {
   let inner = new InnerEvents(ctx, config)
   let labs = new Labs(ctx, config)
 
-  ctx.command('devb-e [plat:text]', '查询校外比赛信息').action(async (_, plat) => {
+  ctx.command('devb-e [plat:text]', '查询校外比赛信息').action(async ({ session }, plat) => {
     let res = await events.getEvents(plat)
-    return res
+    let imgBuffer = await generateInfoImage(ctx, res.sum)
+    session.send(h('message', h.image(imgBuffer, 'image/png'), res.part))
   })
 
-  ctx.command('devb-ine', '查询校内比赛信息').action(async () => {
+  ctx.command('devb-ine', '查询校内比赛信息').action(async ({ session }) => {
     let res = await inner.getEvents(true)
-    return res
+    let imgBuffer = await generateInfoImage(ctx, res)
+    session.send(h('message', h.image(imgBuffer, 'image/png'), '信息详情: https://newbie.frexlink.cn/main.html'))
   })
 
-  ctx.command('devb-unine', '查询未审核的校内比赛信息').action(async () => {
+  ctx.command('devb-unine', '查询未审核的校内比赛信息').action(async ({ session }) => {
     let res = await inner.getEvents(false)
-    return res
+    let imgBuffer = await generateInfoImage(ctx, res)
+    session.send(h('message', h.image(imgBuffer, 'image/png')))
   })
 
   ctx.command('devb-upine', '上传校内比赛信息')
@@ -82,14 +86,16 @@ export function apply(ctx: Context, config: Config) {
       session.send(h('message', h.quote(session.messageId), res))
     })
 
-  ctx.command('devb-lab', '查询校内实验室信息').action(async () => {
+  ctx.command('devb-lab', '查询校内实验室信息').action(async ({ session }) => {
     let res = await labs.getLabs(true)
-    return res
+    let imgBuffer = await generateInfoImage(ctx, res)
+    session.send(h('message', h.image(imgBuffer, 'image/png'), '信息详情: https://newbie.frexlink.cn/main.html'))
   })
 
-  ctx.command('devb-unlab', '查询未审核实验室信息').action(async () => {
+  ctx.command('devb-unlab', '查询未审核实验室信息').action(async ({ session }) => {
     let res = await labs.getLabs(false)
-    return res
+    let imgBuffer = await generateInfoImage(ctx, res)
+    session.send(h('message', h.image(imgBuffer, 'image/png')))
   })
 
   ctx.command('devb-uplab', '上传校内实验室信息')
