@@ -5,6 +5,18 @@ import { Config } from '..'
 export class Labs {
     constructor(private ctx: Context, private config: Config) { }
 
+    private generateSumStr(source: Lab[]) {
+        let res: string = `共找到 ${source.length} 个校内实验室：\n`
+        source.forEach((obj) => {
+            res = res.concat('------------------\n')
+            res = res.concat(`实验室UID：${obj.uid}\n`)
+            res = res.concat(`实验室名称：${obj.name}\n`)
+            res = res.concat(`实验室简介：${obj.summary}\n`)
+        })
+        res = res.concat('------------------')
+        return res
+    }
+
     async getLabs(release: boolean) {
         let apiURL = release ? '/api/lab/get?release=true' : '/api/lab/get?release=false'
         let temp = await this.ctx.http.get(this.config.baseURL + apiURL)
@@ -15,16 +27,7 @@ export class Labs {
                 }
             }
             let data: Lab[] = temp
-            let res: string = `共找到 ${data.length} 个校内实验室：\n`
-            data.forEach((obj) => {
-                res = res.concat('------------------\n')
-                res = res.concat(`实验室UID：${obj.uid}\n`)
-                res = res.concat(`实验室名称：${obj.name}\n`)
-                res = res.concat(`实验室简介：${obj.summary}\n`)
-            })
-            res = res.concat('------------------\n')
-            res = res.concat('信息详情: https://newbie.frexlink.cn/main.html')
-            return res
+            return this.generateSumStr(data)
         }
         else {
             return '暂无实验室信息。'

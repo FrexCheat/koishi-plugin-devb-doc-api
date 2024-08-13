@@ -5,6 +5,19 @@ import { Config } from '..'
 export class InnerEvents {
     constructor(private ctx: Context, private config: Config) { }
 
+    private generateSumStr(source: InnerEvent[]) {
+        let res: string = `共找到 ${source.length} 场校内比赛：\n`
+        source.forEach((obj) => {
+            res = res.concat('------------------\n')
+            res = res.concat(`比赛UID：${obj.uid}\n`)
+            res = res.concat(`比赛名称：${obj.name}\n`)
+            res = res.concat(`比赛简介：${obj.summary}\n`)
+            res = res.concat(`比赛时间：${obj.startAt}\n`)
+        })
+        res = res.concat('------------------')
+        return res
+    }
+
     async getEvents(release: boolean) {
         let apiURL = release ? '/api/event/inner/get?release=true' : '/api/event/inner/get?release=false'
         let temp = await this.ctx.http.get(this.config.baseURL + apiURL)
@@ -15,17 +28,7 @@ export class InnerEvents {
                 }
             }
             let data: InnerEvent[] = temp
-            let res: string = `共找到 ${data.length} 场校内比赛：\n`
-            data.forEach((obj) => {
-                res = res.concat('------------------\n')
-                res = res.concat(`比赛UID：${obj.uid}\n`)
-                res = res.concat(`比赛名称：${obj.name}\n`)
-                res = res.concat(`比赛简介：${obj.summary}\n`)
-                res = res.concat(`比赛时间：${obj.startAt}\n`)
-            })
-            res = res.concat('------------------\n')
-            res = res.concat('比赛详情: https://newbie.frexlink.cn/main.html')
-            return res
+            return this.generateSumStr(data)
         }
         else {
             return '暂无校内比赛信息。'
