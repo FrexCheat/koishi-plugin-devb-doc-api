@@ -2,7 +2,7 @@ import { Context } from 'koishi'
 import type { } from 'koishi-plugin-puppeteer'
 
 export async function generateInfoImage(ctx: Context, content: string) {
-    const htm = `
+  const htm = `
           <!DOCTYPE html>
           <html lang="zh">
             <head>
@@ -34,10 +34,24 @@ export async function generateInfoImage(ctx: Context, content: string) {
             </body>
           </html>
         `
-    const page = await ctx.puppeteer.page()
-    await page.setContent(htm)
-    const list = await page.$('#content-list')
-    const screenshot = await list.screenshot({})
-    page.close()
-    return screenshot
+  const page = await ctx.puppeteer.page()
+  await page.setContent(htm)
+  const list = await page.$('#content-list')
+  const screenshot = await list.screenshot({})
+  page.close()
+  return screenshot
+}
+
+export async function generateRankImage(ctx: Context, prefix: string) {
+  const page = await ctx.puppeteer.page()
+  if (prefix === undefined) {
+    await page.goto(`http://acm.zzuli.edu.cn/ranklist.php`)
+  }
+  else {
+    await page.goto(`http://acm.zzuli.edu.cn/ranklist.php?prefix=${prefix}&csrf=uaI7R81h8K4sii6le3BHeRDip9GqSTlw`)
+  }
+  const list = await page.$('table')
+  const screenshot = await list.screenshot({})
+  page.close()
+  return screenshot
 }

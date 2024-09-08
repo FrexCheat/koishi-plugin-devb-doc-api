@@ -3,7 +3,7 @@ import { Events } from './service/events'
 import { InnerEvents } from './service/events_in'
 import { Labs } from './service/labs'
 import { InnerEvent, Lab } from './types'
-import { generateInfoImage } from './template'
+import { generateInfoImage, generateRankImage } from './template'
 
 export const name = 'devb-doc-api'
 
@@ -75,14 +75,15 @@ export function apply(ctx: Context, config: Config) {
       if (uid === undefined || column === undefined || content === undefined) {
         session.send(h('message', h.quote(session.messageId), '参数不足，请补充参数!'))
       }
-      let res = await inner.updateEvent(uid, column, content)
-      session.send(h('message', h.quote(session.messageId), res))
+      else {
+        let res = await inner.updateEvent(uid, column, content)
+        session.send(h('message', h.quote(session.messageId), res))
+      }
     })
 
-  ctx.command('devb-deine', '删除校内比赛信息')
-    .option('uid', '-u <比赛UID>')
-    .action(async ({ session, options }) => {
-      let res = await inner.deleteEvent(options.uid)
+  ctx.command('devb-deine <uid:string>', '删除校内比赛信息')
+    .action(async ({ session }, uid) => {
+      let res = await inner.deleteEvent(uid)
       session.send(h('message', h.quote(session.messageId), res))
     })
 
@@ -127,14 +128,21 @@ export function apply(ctx: Context, config: Config) {
       if (uid === undefined || column === undefined || content === undefined) {
         session.send(h('message', h.quote(session.messageId), '参数不足，请补充参数!'))
       }
-      let res = await labs.updateLab(uid, column, content)
+      else {
+        let res = await labs.updateLab(uid, column, content)
+        session.send(h('message', h.quote(session.messageId), res))
+      }
+    })
+
+  ctx.command('devb-delab <uid:string>', '删除实验室信息')
+    .action(async ({ session }, uid) => {
+      let res = await labs.deleteLab(uid)
       session.send(h('message', h.quote(session.messageId), res))
     })
 
-  ctx.command('devb-delab', '删除实验室信息')
-    .option('uid', '-u <实验室UID>')
-    .action(async ({ session, options }) => {
-      let res = await labs.deleteLab(options.uid)
-      session.send(h('message', h.quote(session.messageId), res))
+  ctx.command('zzulioj-rank [pre:string]', '查询OJ榜单')
+    .action(async ({ session }, pre) => {
+      let imgBuffer = await generateRankImage(ctx, pre)
+      session.send(h('message', h.image(imgBuffer, 'image/png')))
     })
 }
