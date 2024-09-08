@@ -55,3 +55,12 @@ export async function generateRankImage(ctx: Context, prefix: string) {
   page.close()
   return screenshot
 }
+
+export async function generateProblemImage(ctx: Context, id: number) {
+  const page = await ctx.puppeteer.page()
+  await page.goto(`http://acm.zzuli.edu.cn/problem.php?id=${id}`)
+  const list = await page.$('div.panel.panel-default')
+  const screenshot = await list.screenshot({})
+  page.close()
+  return screenshot
+}
