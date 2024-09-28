@@ -18,9 +18,9 @@ export async function generateInfoImage(ctx: Context, content: string) {
                 }
                 #content-list {
                   padding: 20px;
-                  display: inline-block; /* 使div适应内容宽度 */
-                  max-width: 100%; /* 防止内容溢出 */
-                  white-space: nowrap; /* 防止歌曲名称换行 */
+                  display: inline-block;
+                  max-width: 100%;
+                  white-space: nowrap;
                   transform: scale(0.85);
                   white-space: pre-line;
                 }
@@ -51,6 +51,20 @@ export async function generateRankImage(ctx: Context, prefix: string) {
     await page.goto(`http://acm.zzuli.edu.cn/ranklist.php?prefix=${prefix}&csrf=uaI7R81h8K4sii6le3BHeRDip9GqSTlw`)
   }
   const list = await page.$('table')
+  const screenshot = await list.screenshot({})
+  page.close()
+  return screenshot
+}
+
+export async function generateContestRankImage(ctx: Context, cid: string) {
+  const page = await ctx.puppeteer.page()
+  if (cid === undefined) {
+    await page.goto(`http://acm.zzuli.edu.cn/contestrank.php?cid=2010`)
+  }
+  else {
+    await page.goto(`http://acm.zzuli.edu.cn/contestrank.php?cid=${cid}`)
+  }
+  const list = await page.$('.jumbotron')
   const screenshot = await list.screenshot({})
   page.close()
   return screenshot

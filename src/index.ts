@@ -3,7 +3,7 @@ import { Events } from './service/events'
 import { InnerEvents } from './service/events_in'
 import { Labs } from './service/labs'
 import { InnerEvent, Lab } from './types'
-import { generateInfoImage, generateRankImage, generateProblemImage, generateDayRankImage } from './template'
+import { generateInfoImage, generateRankImage, generateProblemImage, generateDayRankImage, generateContestRankImage } from './template'
 
 export const name = 'devb-doc-api'
 
@@ -143,6 +143,12 @@ export function apply(ctx: Context, config: Config) {
   ctx.command('ojr [pre:string]', '查询OJ排名')
     .action(async ({ session }, pre) => {
       let imgBuffer = await generateRankImage(ctx, pre)
+      session.send(h('message', h.image(imgBuffer, 'image/png')))
+    })
+  
+  ctx.command('ojc [pre:string]', '查询OJ竞赛排名')
+    .action(async ({ session }, pre) => {
+      let imgBuffer = await generateContestRankImage(ctx, pre)
       session.send(h('message', h.image(imgBuffer, 'image/png')))
     })
 
