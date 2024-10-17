@@ -1,4 +1,5 @@
 import { Context } from 'koishi'
+import { Config } from '.'
 import type { } from 'koishi-plugin-puppeteer'
 
 export async function generateInfoImage(ctx: Context, content: string) {
@@ -56,10 +57,10 @@ export async function generateRankImage(ctx: Context, prefix: string) {
   return screenshot
 }
 
-export async function generateContestRankImage(ctx: Context, cid: string) {
+export async function generateContestRankImage(ctx: Context, config: Config, cid: string) {
   const page = await ctx.puppeteer.page()
   if (cid === undefined) {
-    await page.goto(`http://acm.zzuli.edu.cn/contestrank.php?cid=2010`)
+    await page.goto(`http://acm.zzuli.edu.cn/contestrank.php?cid=${config.contestId}`)
   }
   else {
     await page.goto(`http://acm.zzuli.edu.cn/contestrank.php?cid=${cid}`)
@@ -83,6 +84,15 @@ export async function generateProblemImage(ctx: Context, id: number) {
   const page = await ctx.puppeteer.page()
   await page.goto(`http://acm.zzuli.edu.cn/problem.php?id=${id}`)
   const list = await page.$('div.panel.panel-default')
+  const screenshot = await list.screenshot({})
+  page.close()
+  return screenshot
+}
+
+export async function generateProblemSearchImage(ctx: Context, title: string) {
+  const page = await ctx.puppeteer.page()
+  await page.goto(`http://acm.zzuli.edu.cn/problemset.php?search=${title}`)
+  const list = await page.$('#problemset')
   const screenshot = await list.screenshot({})
   page.close()
   return screenshot
