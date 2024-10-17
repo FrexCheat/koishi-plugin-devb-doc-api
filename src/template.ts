@@ -91,6 +91,8 @@ export async function generateProblemImage(ctx: Context, id: number) {
 
 export async function generateProblemSearchImage(ctx: Context, title: string) {
   const page = await ctx.puppeteer.page()
+  const specialChars = /[!@#$%^&*(),.?":{}|<>]/g
+  title.replace(specialChars, char => encodeURIComponent(char))
   await page.goto(`http://acm.zzuli.edu.cn/problemset.php?search=${title}`)
   const list = await page.$('#problemset')
   const screenshot = await list.screenshot({})
