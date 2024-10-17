@@ -3,7 +3,7 @@ import { Events } from './service/events'
 import { InnerEvents } from './service/events_in'
 import { Labs } from './service/labs'
 import { InnerEvent, Lab } from './types'
-import { generateInfoImage, generateRankImage, generateProblemImage, generateDayRankImage, generateContestRankImage } from './template'
+import { generateInfoImage, generateRankImage, generateProblemImage, generateDayRankImage, generateContestRankImage, generateProblemSearchImage } from './template'
 
 export const name = 'devb-doc-api'
 
@@ -17,7 +17,8 @@ interface Group {
 export interface Config {
   baseURL: string,
   checker: string,
-  groups: Group[]
+  groups: Array<Group>,
+  contestId: string
 }
 
 export const Config: Schema<Config> = Schema.object({
@@ -26,7 +27,8 @@ export const Config: Schema<Config> = Schema.object({
   groups: Schema.array(Schema.object({
     platform: Schema.string().required(),
     uid: Schema.string().required()
-  })).description('接收审核信息的群组').role('table')
+  })).description('接收审核信息的群组').role('table'),
+  contestId: Schema.string().default('2012').description('榜单默认比赛ID')
 })
 
 export function apply(ctx: Context, config: Config) {
@@ -148,7 +150,7 @@ export function apply(ctx: Context, config: Config) {
   
   ctx.command('ojc [pre:string]', '查询OJ竞赛排名')
     .action(async ({ session }, pre) => {
-      let imgBuffer = await generateContestRankImage(ctx, pre)
+      let imgBuffer = await generateContestRankImage(ctx, config, pre)
       session.send(h('message', h.image(imgBuffer, 'image/png')))
     })
 
@@ -160,11 +162,22 @@ export function apply(ctx: Context, config: Config) {
 
   ctx.command('ojp <id:number>', '查询OJ题目')
     .action(async ({ session }, id) => {
-      if (id === undefined || id < 1000) {
+      if (id === undefined || id < 1000 || id > 5000) { 
         session.send(h('message', h.quote(session.messageId), '题目ID不合法!'))
       }
       else {
         let imgBuffer = await generateProblemImage(ctx, id)
+        session.send(h('message', h.image(imgBuffer, 'image/png')))
+      }
+    })
+  
+  ctx.command('ojs <title:text>', '搜索OJ题目')
+    .action(async ({ session }, title) => {
+      if (title === undefined) {
+        session.send(h('message', h.quote(session.messageId), '题目标题不合法!'))
+      }
+      else {
+        let imgBuffer = await generateProblemSearchImage(ctx, title)
         session.send(h('message', h.image(imgBuffer, 'image/png')))
       }
     })
