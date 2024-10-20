@@ -15,6 +15,7 @@ interface Group {
 }
 
 export interface Config {
+  httpURL: string,
   baseURL: string,
   checker: string,
   groups: Array<Group>,
@@ -22,6 +23,7 @@ export interface Config {
 }
 
 export const Config: Schema<Config> = Schema.object({
+  httpURL: Schema.string().required().description('bot_API请求地址'),
   baseURL: Schema.string().required().description('API请求地址'),
   checker: Schema.string().description('接收审核信息的账号'),
   groups: Schema.array(Schema.object({
@@ -179,6 +181,30 @@ export function apply(ctx: Context, config: Config) {
       else {
         let imgBuffer = await generateProblemSearchImage(ctx, title)
         session.send(h('message', h.image(imgBuffer, 'image/png')))
+      }
+    })
+  
+  ctx.command('poke <target:user> [count:number]', '戳一戳')
+    .action(async ({ session }, target, count) => { 
+      if (!session.guildId) { 
+        return session.text('此命令只能在群聊中使用。')
+      }
+      if (!target) { 
+        return session.text('请指定目标用户。')
+      }
+      const targetId = target.slice(session.platform.length + 1)
+      if (count === undefined) count = 1
+      for (let i = 0; i < count; i++) {
+        let res = await ctx.http.get(`${config.httpURL}/group_poke`, {
+          headers: {
+            Authorization: "Bearer FrexCheat"
+          },
+          params: {
+            group_id: session.guildId,
+            user_id: targetId
+          }
+        })
+        ctx.sleep(500)
       }
     })
 }
