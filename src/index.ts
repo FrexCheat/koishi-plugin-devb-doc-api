@@ -47,7 +47,7 @@ export function apply(ctx: Context, config: Config) {
   ctx.command('devb-ine', '查询校内比赛信息').action(async ({ session }) => {
     let res = await inner.getEvents(true)
     let imgBuffer = await generateInfoImage(ctx, res)
-    session.send(h('message', h.image(imgBuffer, 'image/png'), '信息详情: https://newbie.frexlink.cn/main.html'))
+    session.send(h('message', h.image(imgBuffer, 'image/png'), '信息详情: https://www.frexlink.cn/main.html'))
   })
 
   ctx.command('devb-unine', '查询未审核的校内比赛信息').action(async ({ session }) => {
@@ -94,7 +94,7 @@ export function apply(ctx: Context, config: Config) {
   ctx.command('devb-lab', '查询校内实验室信息').action(async ({ session }) => {
     let res = await labs.getLabs(true)
     let imgBuffer = await generateInfoImage(ctx, res)
-    session.send(h('message', h.image(imgBuffer, 'image/png'), '信息详情: https://newbie.frexlink.cn/main.html'))
+    session.send(h('message', h.image(imgBuffer, 'image/png'), '信息详情: https://www.frexlink.cn/main.html'))
   })
 
   ctx.command('devb-unlab', '查询未审核实验室信息').action(async ({ session }) => {
