@@ -81,7 +81,7 @@ export class Labs {
                     return `修改失败! ${resp['message']}`
                 }
             }
-            return '修改成功, 详情见: https://newbie.frexlink.cn/main.html'
+            return '修改成功, 详情见: https://www.frexlink.cn/main.html'
         }
         else {
             return '字段名不存在，请重试。'
