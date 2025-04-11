@@ -12,10 +12,9 @@
 
 _🚀 DevBeginner-Doc 微服务机器人插件 🚀_
 
-<a href="./LICENSE">
-  <img src="https://img.shields.io/github/license/FrexCheat/koishi-plugin-devb-doc-api.svg" alt="license">
-</a>
-<a href="https://www.npmjs.com/package/koishi-plugin-devb-doc-api">
-  <img src="https://img.shields.io/npm/v/koishi-plugin-devb-doc-api?style=flat-square" alt="pypi">
-</a>
+<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/FrexCheat/koishi-plugin-devb-doc-api">
+
+<img src="https://img.shields.io/github/license/FrexCheat/koishi-plugin-devb-doc-api.svg" alt="license">
+
+<img alt="GitHub top language" src="https://img.shields.io/github/languages/top/FrexCheat/koishi-plugin-devb-doc-api">
 </div>
